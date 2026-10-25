@@ -1,0 +1,32 @@
+# Java
+target/
+*.class
+*.jar
+*.war
+*.log
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.project
+.classpath
+.settings/
+
+# Node/Angular
+node_modules/
+dist/
+.angular/
+.npm
+
+# Environment
+.env
+*.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+postgres_data/

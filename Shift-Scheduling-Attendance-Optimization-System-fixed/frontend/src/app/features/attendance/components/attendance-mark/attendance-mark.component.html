@@ -1,0 +1,70 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <div>
+      <h2>Mark Attendance</h2>
+      <p class="subtitle">{{ today }}</p>
+    </div>
+  </div>
+
+  <!-- Employee selector for admin/hr -->
+  <div class="section-card" *ngIf="isAdminOrHr">
+    <label class="field-label">Select Employee</label>
+    <mat-form-field appearance="outline" class="employee-select">
+      <mat-label>Employee</mat-label>
+      <mat-select [(ngModel)]="selectedEmployeeId">
+        <mat-option *ngFor="let e of employees" [value]="e.id">{{ e.fullName }}</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <!-- Status Card -->
+  <div class="attendance-card" *ngIf="getMyRecord() as record">
+    <div class="att-status-indicator checked-in" *ngIf="!record.checkOutTime">
+      <mat-icon>radio_button_checked</mat-icon>
+      <span>Checked In</span>
+    </div>
+    <div class="att-status-indicator checked-out" *ngIf="record.checkOutTime">
+      <mat-icon>check_circle</mat-icon>
+      <span>Checked Out</span>
+    </div>
+
+    <div class="att-details">
+      <div class="att-detail-item" *ngIf="record.checkInTime">
+        <mat-icon>login</mat-icon>
+        <div>
+          <span class="att-detail-label">Check In</span>
+          <span class="att-detail-value">{{ record.checkInTime }}</span>
+        </div>
+      </div>
+      <div class="att-detail-item" *ngIf="record.checkOutTime">
+        <mat-icon>logout</mat-icon>
+        <div>
+          <span class="att-detail-label">Check Out</span>
+          <span class="att-detail-value">{{ record.checkOutTime }}</span>
+        </div>
+      </div>
+      <div class="att-detail-item" *ngIf="record.workedHours">
+        <mat-icon>schedule</mat-icon>
+        <div>
+          <span class="att-detail-label">Hours Worked</span>
+          <span class="att-detail-value">{{ record.workedHours | number:'1.1-1' }}h</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="not-checked section-card" *ngIf="!getMyRecord() && selectedEmployeeId">
+    <mat-icon>info_outline</mat-icon>
+    <span>Not checked in yet today.</span>
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="btn-group">
+    <button class="action-btn checkin-btn" (click)="checkIn()" [disabled]="!selectedEmployeeId">
+      <mat-icon>login</mat-icon> Check In
+    </button>
+    <button class="action-btn checkout-btn" (click)="checkOut()" [disabled]="!selectedEmployeeId">
+      <mat-icon>logout</mat-icon> Check Out
+    </button>
+  </div>
+</div>

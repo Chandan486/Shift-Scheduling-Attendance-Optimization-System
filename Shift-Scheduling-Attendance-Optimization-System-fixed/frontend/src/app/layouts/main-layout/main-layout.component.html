@@ -1,0 +1,96 @@
+<div class="app-layout" [class.collapsed]="sidenavCollapsed">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidenavCollapsed">
+    <div class="sidebar-header">
+      <div class="logo" *ngIf="!sidenavCollapsed">
+        <mat-icon class="logo-icon">schedule</mat-icon>
+        <span class="logo-text">ShiftPro</span>
+      </div>
+      <mat-icon class="logo-icon-only" *ngIf="sidenavCollapsed">schedule</mat-icon>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ng-container *ngFor="let item of navItems">
+        <a *ngIf="isVisible(item)"
+           class="nav-item"
+           [routerLink]="item.route"
+           routerLinkActive="active"
+           [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+           [matTooltip]="sidenavCollapsed ? item.label : ''"
+           matTooltipPosition="right">
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span class="nav-label" *ngIf="!sidenavCollapsed">{{ item.label }}</span>
+          <span class="badge" *ngIf="item.route === '/notifications' && unreadCount > 0 && !sidenavCollapsed">{{ unreadCount }}</span>
+        </a>
+        <div class="nav-divider" *ngIf="item.dividerAfter && isVisible(item)"></div>
+      </ng-container>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="theme-toggle" (click)="toggleTheme()" [matTooltip]="sidenavCollapsed ? (isDark ? 'Light Mode' : 'Dark Mode') : ''" matTooltipPosition="right">
+        <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+        <span *ngIf="!sidenavCollapsed">{{ isDark ? 'Light Mode' : 'Dark Mode' }}</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Area -->
+  <div class="main-area">
+    <!-- Top Bar -->
+    <header class="topbar">
+      <button class="menu-btn" (click)="toggleSidenav()">
+        <mat-icon>{{ sidenavCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+      </button>
+
+      <div class="topbar-spacer"></div>
+
+      <!-- Notifications -->
+      <button class="topbar-icon-btn" routerLink="/notifications" matTooltip="Notifications">
+        <mat-icon [matBadge]="unreadCount > 0 ? unreadCount : null"
+                  matBadgeColor="warn" matBadgeSize="small">
+          notifications_none
+        </mat-icon>
+      </button>
+
+      <!-- Theme Toggle (topbar) -->
+      <button class="topbar-icon-btn" (click)="toggleTheme()" [matTooltip]="isDark ? 'Light Mode' : 'Dark Mode'">
+        <mat-icon>{{ isDark ? 'light_mode' : 'dark_mode' }}</mat-icon>
+      </button>
+
+      <!-- User Menu -->
+      <button class="user-avatar-btn" [matMenuTriggerFor]="userMenu">
+        <div class="avatar">{{ userInitials }}</div>
+        <div class="user-info" *ngIf="currentUser">
+          <span class="user-name">{{ currentUser.fullName }}</span>
+          <span class="user-role">{{ currentUser.role }}</span>
+        </div>
+        <mat-icon class="dropdown-icon">expand_more</mat-icon>
+      </button>
+
+      <mat-menu #userMenu="matMenu" xPosition="before">
+        <div class="menu-header">
+          <div class="menu-avatar">{{ userInitials }}</div>
+          <div>
+            <div class="menu-user-name">{{ currentUser?.fullName }}</div>
+            <div class="menu-user-role">{{ currentUser?.role }}</div>
+          </div>
+        </div>
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="/notifications">
+          <mat-icon>notifications</mat-icon>
+          <span>Notifications</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Sign Out</span>
+        </button>
+      </mat-menu>
+    </header>
+
+    <!-- Page Content -->
+    <main class="page-content">
+      <router-outlet></router-outlet>
+    </main>
+  </div>
+</div>

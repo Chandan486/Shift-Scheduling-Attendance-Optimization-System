@@ -1,0 +1,79 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <div>
+      <h2>Leave Approvals</h2>
+      <p class="subtitle">Review leave requests you are authorised to decide</p>
+    </div>
+    <span class="pending-count" *ngIf="pendingLeaves.length">{{ pendingLeaves.length }} pending</span>
+  </div>
+
+  <p class="load-error" *ngIf="loadError">
+    {{ loadError }} <button class="pill-btn" (click)="loadPending()">Retry</button>
+  </p>
+
+  <div class="empty-state" *ngIf="loading && !pendingLeaves.length">
+    <mat-icon>hourglass_empty</mat-icon>
+    <h3>Loading…</h3>
+  </div>
+
+  <div class="table-card" *ngIf="pendingLeaves.length">
+    <table mat-table [dataSource]="pendingLeaves" class="full-width">
+      <ng-container matColumnDef="applicant">
+        <th mat-header-cell *matHeaderCellDef>Applicant</th>
+        <td mat-cell *matCellDef="let l">
+          <div>{{ l.applicantName || ('User #' + l.applicantUserId) }}</div>
+          <small>{{ roleLabel(l.applicantRole) }}</small>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="department">
+        <th mat-header-cell *matHeaderCellDef>Department</th>
+        <td mat-cell *matCellDef="let l">{{ departmentByUserId.get(l.applicantUserId) || '—' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="leaveType">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let l"><span class="leave-type-badge">{{ l.leaveType }}</span></td>
+      </ng-container>
+      <ng-container matColumnDef="dates">
+        <th mat-header-cell *matHeaderCellDef>From – To</th>
+        <td mat-cell *matCellDef="let l">{{ l.startDate }} – {{ l.endDate }}</td>
+      </ng-container>
+      <ng-container matColumnDef="reason">
+        <th mat-header-cell *matHeaderCellDef>Reason</th>
+        <td mat-cell *matCellDef="let l">{{ l.reason }}</td>
+      </ng-container>
+      <ng-container matColumnDef="submitted">
+        <th mat-header-cell *matHeaderCellDef>Submitted</th>
+        <td mat-cell *matCellDef="let l">{{ l.createdAt | date:'medium' }}</td>
+      </ng-container>
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Decision</th>
+        <td mat-cell *matCellDef="let l">
+          <div class="action-cell" *ngIf="canReview(l); else awaiting">
+            <mat-form-field appearance="outline" class="notes-field">
+              <mat-label>Reason / note</mat-label>
+              <input matInput [(ngModel)]="reviewNotes[l.id]" placeholder="Required to reject">
+            </mat-form-field>
+            <button class="pill-btn approve" (click)="approve(l)" [disabled]="busyId === l.id">
+              <mat-icon>check</mat-icon> Approve
+            </button>
+            <button class="pill-btn reject" (click)="reject(l)" [disabled]="busyId === l.id"
+                    [matTooltip]="reviewNotes[l.id]?.trim() ? 'Reject this request' : 'Enter a reason first'">
+              <mat-icon>close</mat-icon> Reject
+            </button>
+          </div>
+          <ng-template #awaiting>
+            <span class="muted">{{ awaitingLabel(l) }}</span>
+          </ng-template>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <div class="empty-state" *ngIf="!loading && !pendingLeaves.length && !loadError">
+    <mat-icon>task_alt</mat-icon>
+    <h3>All Clear</h3>
+    <p>No leave requests are waiting for your decision.</p>
+  </div>
+</div>

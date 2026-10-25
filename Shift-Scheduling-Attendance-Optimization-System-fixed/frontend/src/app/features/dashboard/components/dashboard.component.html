@@ -1,0 +1,186 @@
+<div class="dashboard fade-in">
+  <!-- Header -->
+  <div class="dash-header">
+    <div>
+      <h1>Welcome back, {{ currentUser?.fullName }}</h1>
+      <p class="dash-subtitle">Here's what's happening today</p>
+    </div>
+    <div class="dash-date">
+      <mat-icon>calendar_today</mat-icon>
+      <span>{{ today | date:'EEEE, MMMM d, y' }}</span>
+    </div>
+  </div>
+
+  <!-- Admin / HR Dashboard -->
+  <ng-container *ngIf="isAdminOrHr">
+    <!-- Stat Cards -->
+    <div class="stat-cards">
+      <div class="stat-card" routerLink="/employees">
+        <div class="stat-card-icon blue">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Total Employees</span>
+          <span class="stat-value">{{ totalEmployees }}</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+
+      <div class="stat-card" routerLink="/leaves/approval">
+        <div class="stat-card-icon amber">
+          <mat-icon>pending_actions</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Pending Leaves</span>
+          <span class="stat-value">{{ pendingLeaves }}</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+
+      <div class="stat-card" routerLink="/scheduling">
+        <div class="stat-card-icon green">
+          <mat-icon>calendar_month</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Active Schedules</span>
+          <span class="stat-value">{{ activeSchedules }}</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+
+      <div class="stat-card" routerLink="/attendance">
+        <div class="stat-card-icon purple">
+          <mat-icon>fact_check</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Today's Attendance</span>
+          <span class="stat-value">&mdash;</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+        <p>Common tasks you perform frequently</p>
+      </div>
+      <div class="quick-grid">
+        <a class="quick-item" routerLink="/scheduling">
+          <div class="quick-icon blue"><mat-icon>auto_awesome</mat-icon></div>
+          <span class="quick-label">Generate Schedule</span>
+          <span class="quick-desc">Auto-assign shifts</span>
+        </a>
+        <a class="quick-item" routerLink="/employees">
+          <div class="quick-icon green"><mat-icon>person_add</mat-icon></div>
+          <span class="quick-label">Add Employee</span>
+          <span class="quick-desc">Register new staff</span>
+        </a>
+        <a class="quick-item" routerLink="/shifts">
+          <div class="quick-icon amber"><mat-icon>more_time</mat-icon></div>
+          <span class="quick-label">Create Shift</span>
+          <span class="quick-desc">Define shift timings</span>
+        </a>
+        <a class="quick-item" routerLink="/reports">
+          <div class="quick-icon purple"><mat-icon>assessment</mat-icon></div>
+          <span class="quick-label">View Reports</span>
+          <span class="quick-desc">Analytics & insights</span>
+        </a>
+        <a class="quick-item" routerLink="/attendance/overview">
+          <div class="quick-icon green"><mat-icon>groups</mat-icon></div>
+          <span class="quick-label">Attendance Overview</span>
+          <span class="quick-desc">Present, absent & leave by date</span>
+        </a>
+        <a class="quick-item" routerLink="/leaves/approval">
+          <div class="quick-icon red"><mat-icon>approval</mat-icon></div>
+          <span class="quick-label">Leave Approvals</span>
+          <span class="quick-desc">Review requests</span>
+        </a>
+        <a class="quick-item" routerLink="/users">
+          <div class="quick-icon teal"><mat-icon>admin_panel_settings</mat-icon></div>
+          <span class="quick-label">Manage Users</span>
+          <span class="quick-desc">Accounts & roles</span>
+        </a>
+      </div>
+    </div>
+  </ng-container>
+
+  <!-- Employee Dashboard -->
+  <ng-container *ngIf="!isAdminOrHr">
+    <div class="stat-cards">
+      <div class="stat-card" routerLink="/my-schedule">
+        <div class="stat-card-icon blue">
+          <mat-icon>event_note</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">My Schedule</span>
+          <span class="stat-value">View Shifts</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+
+      <div class="stat-card" *ngIf="leaveBalance" routerLink="/leaves">
+        <div class="stat-card-icon amber">
+          <mat-icon>beach_access</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Annual Leaves Left</span>
+          <span class="stat-value">{{ leaveBalance.annualRemaining || 0 }}</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+
+      <div class="stat-card" routerLink="/attendance/mark">
+        <div class="stat-card-icon green">
+          <mat-icon>fingerprint</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Attendance</span>
+          <span class="stat-value">Mark Now</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+
+      <div class="stat-card" routerLink="/notifications">
+        <div class="stat-card-icon purple">
+          <mat-icon>notifications</mat-icon>
+        </div>
+        <div class="stat-card-body">
+          <span class="stat-label">Notifications</span>
+          <span class="stat-value">Check Updates</span>
+        </div>
+        <mat-icon class="stat-arrow">arrow_forward</mat-icon>
+      </div>
+    </div>
+
+    <!-- Employee Quick Actions -->
+    <div class="section-card">
+      <div class="section-header">
+        <h2>Quick Actions</h2>
+      </div>
+      <div class="quick-grid">
+        <a class="quick-item" routerLink="/attendance/mark">
+          <div class="quick-icon green"><mat-icon>fingerprint</mat-icon></div>
+          <span class="quick-label">Mark Attendance</span>
+          <span class="quick-desc">Check in / Check out</span>
+        </a>
+        <a class="quick-item" routerLink="/leaves">
+          <div class="quick-icon amber"><mat-icon>post_add</mat-icon></div>
+          <span class="quick-label">Apply Leave</span>
+          <span class="quick-desc">Submit a request</span>
+        </a>
+        <a class="quick-item" routerLink="/my-schedule">
+          <div class="quick-icon blue"><mat-icon>event_note</mat-icon></div>
+          <span class="quick-label">My Schedule</span>
+          <span class="quick-desc">Upcoming shifts</span>
+        </a>
+        <a class="quick-item" routerLink="/notifications">
+          <div class="quick-icon purple"><mat-icon>notifications</mat-icon></div>
+          <span class="quick-label">Notifications</span>
+          <span class="quick-desc">Latest updates</span>
+        </a>
+      </div>
+    </div>
+  </ng-container>
+</div>

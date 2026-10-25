@@ -1,0 +1,71 @@
+.pending-count {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  background: var(--warning-light);
+  color: var(--warning);
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.full-width { width: 100%; }
+
+.leave-type-badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
+
+.action-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.notes-field {
+  width: 140px;
+}
+
+.pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+  white-space: nowrap;
+
+  mat-icon { font-size: 16px; width: 16px; height: 16px; }
+
+  &.approve {
+    background: var(--success-light);
+    color: var(--success);
+    &:hover { background: var(--success); color: white; }
+  }
+
+  &.reject {
+    background: var(--danger-light);
+    color: var(--danger);
+    &:hover { background: var(--danger); color: white; }
+  }
+}
+.load-error { color: #d32f2f; margin: 8px 0; }

@@ -1,0 +1,150 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: shift-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres123}
+    ports:
+      - "127.0.0.1:5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-databases.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  discovery-server:
+    build: ./backend/discovery-server
+    container_name: shift-discovery
+    ports:
+      - "127.0.0.1:8761:8761"
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:8761/actuator/health"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  auth-service:
+    build: ./backend/auth-service
+    container_name: shift-auth
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shift_auth_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres123}
+      EUREKA_HOST: discovery-server
+      JWT_SECRET: ${JWT_SECRET:-shift-scheduling-dev-secret-key-change-in-production-2024}
+      DEMO_RESET_PASSWORDS: ${DEMO_RESET_PASSWORDS:-true}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  employee-service:
+    build: ./backend/employee-service
+    container_name: shift-employee
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shift_employee_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres123}
+      EUREKA_HOST: discovery-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  scheduling-service:
+    build: ./backend/scheduling-service
+    container_name: shift-scheduling
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shift_scheduling_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres123}
+      EUREKA_HOST: discovery-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  attendance-service:
+    build: ./backend/attendance-service
+    container_name: shift-attendance
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shift_attendance_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres123}
+      EUREKA_HOST: discovery-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  leave-service:
+    build: ./backend/leave-service
+    container_name: shift-leave
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shift_leave_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres123}
+      EUREKA_HOST: discovery-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  notification-service:
+    build: ./backend/notification-service
+    container_name: shift-notification
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/shift_notification_db
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-postgres123}
+      EUREKA_HOST: discovery-server
+    depends_on:
+      postgres:
+        condition: service_healthy
+      discovery-server:
+        condition: service_healthy
+
+  api-gateway:
+    build: ./backend/api-gateway
+    container_name: shift-gateway
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      EUREKA_HOST: discovery-server
+      JWT_SECRET: ${JWT_SECRET:-shift-scheduling-dev-secret-key-change-in-production-2024}
+    depends_on:
+      discovery-server:
+        condition: service_healthy
+      auth-service:
+        condition: service_started
+      employee-service:
+        condition: service_started
+      scheduling-service:
+        condition: service_started
+      attendance-service:
+        condition: service_started
+      leave-service:
+        condition: service_started
+      notification-service:
+        condition: service_started
+
+  frontend:
+    build: ./frontend
+    container_name: shift-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - api-gateway
+
+volumes:
+  postgres_data:

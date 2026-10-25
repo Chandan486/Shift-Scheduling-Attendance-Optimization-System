@@ -1,0 +1,165 @@
+<div class="page-wrap fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h2>{{ isEdit ? 'Edit' : 'Create' }} Shift</h2>
+      <p class="subtitle">{{ isEdit ? 'Update shift details' : 'Define a new shift with timing and staffing' }}</p>
+    </div>
+  </div>
+
+  <!-- Form Card -->
+  <div class="section-card">
+    <form [formGroup]="form" (ngSubmit)="onSubmit()">
+      <!-- Basic Info -->
+      <h3 class="section-title">
+        <mat-icon>info</mat-icon> Basic Information
+      </h3>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Shift Name</mat-label>
+          <input matInput formControlName="name" required>
+          <mat-error *ngIf="form.get('name')?.hasError('required')">Shift name is required</mat-error>
+          <mat-error *ngIf="form.get('name')?.hasError('minlength')">Minimum 2 characters</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Department</mat-label>
+          <mat-select formControlName="departmentId" required>
+            @for (dept of departments; track dept.id) {
+              <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-error *ngIf="form.get('departmentId')?.hasError('required')">Department is required</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Timing -->
+      <h3 class="section-title">
+        <mat-icon>schedule</mat-icon> Timing
+      </h3>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Date</mat-label>
+          <input matInput formControlName="date" type="date" required>
+          <mat-error *ngIf="form.get('date')?.hasError('required')">Date is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Start Time</mat-label>
+          <input matInput formControlName="startTime" type="time" required>
+          <mat-error *ngIf="form.get('startTime')?.hasError('required')">Start time is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>End Time</mat-label>
+          <input matInput formControlName="endTime" type="time" required>
+          <mat-error *ngIf="form.get('endTime')?.hasError('required')">End time is required</mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- Staffing -->
+      <h3 class="section-title">
+        <mat-icon>groups</mat-icon> Staffing
+      </h3>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Min Staff</mat-label>
+          <input matInput formControlName="minStaff" type="number">
+          <mat-error *ngIf="form.get('minStaff')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('minStaff')?.hasError('min')">Must be at least 1</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Max Staff</mat-label>
+          <input matInput formControlName="maxStaff" type="number">
+          <mat-error *ngIf="form.get('maxStaff')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('maxStaff')?.hasError('min')">Must be at least 1</mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="toggle-row">
+        <mat-slide-toggle formControlName="overnight">Overnight Shift</mat-slide-toggle>
+        <mat-slide-toggle formControlName="nightShift">Night Shift</mat-slide-toggle>
+      </div>
+
+      <!-- Employee Assignment -->
+      <div class="section-divider"></div>
+      <h3 class="section-title">
+        <mat-icon>badge</mat-icon> Assign Employees <span class="optional-hint">(optional)</span>
+      </h3>
+
+      <p class="load-error" *ngIf="employeesError">
+        {{ employeesError }} <button type="button" class="pill-btn" (click)="loadEmployees()">Retry</button>
+      </p>
+      <p class="muted" *ngIf="employeesLoading">Loading employees…</p>
+
+      <div class="form-row" *ngIf="!employeesError">
+        <mat-form-field appearance="outline">
+          <mat-label>Employees of this shift's department</mat-label>
+          <mat-select formControlName="employeeIds" multiple [disabled]="employeesLoading || !form.get('departmentId')?.value">
+            @for (emp of filteredEmployees; track emp.id) {
+              <mat-option [value]="emp.id">
+                {{ emp.fullName }} · ID {{ emp.id }}
+              </mat-option>
+            } @empty {
+              <mat-option [disabled]="true">
+                {{ form.get('departmentId')?.value ? 'No active employees in this department' : 'Select a department first' }}
+              </mat-option>
+            }
+          </mat-select>
+          <mat-hint>{{ selectedEmployeeIds.length }} selected · up to {{ form.get('maxStaff')?.value }} per shift</mat-hint>
+        </mat-form-field>
+      </div>
+
+      <div class="selected-list" *ngIf="selectedEmployees.length">
+        @for (emp of selectedEmployees; track emp.id) {
+          <span class="assignee-chip">
+            {{ emp.fullName }} <small>ID {{ emp.id }}</small>
+            <button type="button" class="chip-x" (click)="removeEmployee(emp.id)" matTooltip="Remove">×</button>
+          </span>
+        }
+      </div>
+      <p class="field-error" *ngIf="wrongDepartmentSelections > 0">
+        {{ wrongDepartmentSelections }} selected employee(s) belong to another department and must be removed.
+      </p>
+      <p class="field-error" *ngIf="capacityExceeded">
+        {{ selectedEmployeeIds.length }} employees selected, but this shift allows at most {{ form.get('maxStaff')?.value }}.
+      </p>
+
+      <!-- Skill Requirements -->
+      <div class="section-divider"></div>
+      <h3 class="section-title">
+        <mat-icon>psychology</mat-icon> Skill Requirements
+      </h3>
+
+      @for (req of requirements.controls; track req; let i = $index) {
+        <div class="requirement-row" [formGroupName]="i">
+          <mat-form-field appearance="outline">
+            <mat-label>Skill</mat-label>
+            <mat-select formControlName="skillId">
+              @for (skill of skills; track skill.id) {
+                <mat-option [value]="skill.id">{{ skill.name }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Required Count</mat-label>
+            <input matInput formControlName="requiredCount" type="number">
+          </mat-form-field>
+          <button class="icon-btn danger" type="button" (click)="removeRequirement(i)" matTooltip="Remove">
+            <mat-icon>remove_circle</mat-icon>
+          </button>
+        </div>
+      }
+
+      <button class="btn-outline" type="button" (click)="addRequirement()">
+        <mat-icon>add</mat-icon> Add Requirement
+      </button>
+
+      <!-- Actions -->
+      <div class="form-actions">
+        <a class="btn-ghost" routerLink="/shifts">Cancel</a>
+        <button class="btn-primary" type="submit" [disabled]="form.invalid || capacityExceeded || wrongDepartmentSelections > 0 || saving">
+          <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
+          {{ isEdit ? 'Update Shift' : 'Create Shift' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

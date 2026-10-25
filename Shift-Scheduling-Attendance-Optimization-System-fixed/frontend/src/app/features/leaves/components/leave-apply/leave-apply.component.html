@@ -1,0 +1,71 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <div>
+      <h2>Apply for Leave</h2>
+      <p class="subtitle">Submit a new leave request</p>
+    </div>
+  </div>
+
+  <!-- Balance Cards -->
+  <div class="balance-grid" *ngIf="balance">
+    <div class="balance-card">
+      <div class="balance-icon blue"><mat-icon>event_available</mat-icon></div>
+      <div class="balance-info">
+        <span class="balance-label">Annual</span>
+        <span class="balance-value">{{ balance.annualRemaining }}<small>/{{ balance.annualTotal }}</small></span>
+      </div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-icon red"><mat-icon>local_hospital</mat-icon></div>
+      <div class="balance-info">
+        <span class="balance-label">Sick</span>
+        <span class="balance-value">{{ balance.sickRemaining }}<small>/{{ balance.sickTotal }}</small></span>
+      </div>
+    </div>
+    <div class="balance-card">
+      <div class="balance-icon purple"><mat-icon>person</mat-icon></div>
+      <div class="balance-info">
+        <span class="balance-label">Personal</span>
+        <span class="balance-value">{{ balance.personalRemaining }}<small>/{{ balance.personalTotal }}</small></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Leave Form -->
+  <div class="form-card">
+    <h3>Leave Details</h3>
+    <form [formGroup]="form" (ngSubmit)="submit()" class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Leave Type</mat-label>
+        <mat-select formControlName="leaveType">
+          <mat-option *ngFor="let t of leaveTypes" [value]="t">{{ t }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="form.get('leaveType')?.hasError('required')">Leave type is required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Start Date</mat-label>
+        <input matInput type="date" formControlName="startDate">
+        <mat-error *ngIf="form.get('startDate')?.hasError('required')">Start date is required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>End Date</mat-label>
+        <input matInput type="date" formControlName="endDate">
+        <mat-error *ngIf="form.get('endDate')?.hasError('required')">End date is required</mat-error>
+      </mat-form-field>
+      <mat-form-field appearance="outline" class="full-span">
+        <mat-label>Reason</mat-label>
+        <textarea matInput formControlName="reason" rows="3" placeholder="Briefly describe the reason for your leave" maxlength="500"></textarea>
+        <mat-error *ngIf="form.get('reason')?.hasError('required')">Reason is required</mat-error>
+        <mat-error *ngIf="form.get('reason')?.hasError('minlength')">Reason must be at least 10 characters</mat-error>
+        <mat-error *ngIf="form.get('reason')?.hasError('maxlength')">Reason cannot exceed 500 characters</mat-error>
+        <mat-hint align="end">{{ form.get('reason')?.value?.length || 0 }}/500</mat-hint>
+      </mat-form-field>
+      <div class="form-actions">
+        <button type="button" class="action-btn outline-btn" routerLink="/leaves">Cancel</button>
+        <button type="submit" class="action-btn primary-btn" [disabled]="form.invalid">
+          <mat-icon>send</mat-icon> Submit Request
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

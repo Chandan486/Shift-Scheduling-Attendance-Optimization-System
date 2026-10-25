@@ -1,0 +1,121 @@
+<div class="page-wrapper fade-in" *ngIf="employee">
+  <!-- Profile Header Card -->
+  <div class="profile-card">
+    <div class="profile-top">
+      <div class="profile-avatar">{{ employee.fullName?.charAt(0) || '?' }}</div>
+      <div class="profile-info">
+        <h2>{{ employee.fullName }}</h2>
+        <p class="profile-position">{{ employee.position }}</p>
+        <div class="profile-tags">
+          <span class="dept-tag">{{ employee.departmentName }}</span>
+          <span class="status-badge" [class]="employee.active ? 'active' : 'inactive'">
+            {{ employee.active ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+      </div>
+      <button class="btn-primary" [routerLink]="['/employees/edit', employee.id]">
+        <mat-icon>edit</mat-icon>
+        <span>Edit</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <mat-tab-group animationDuration="200ms">
+    <mat-tab label="Details">
+      <div class="tab-content">
+        <!-- Contact Info -->
+        <div class="section-card">
+          <div class="section-title">
+            <mat-icon>contact_mail</mat-icon>
+            <h3>Contact Information</h3>
+          </div>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Email</span>
+              <span class="info-value">{{ employee.email }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Phone</span>
+              <span class="info-value">{{ employee.phone || 'Not provided' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Department</span>
+              <span class="info-value">{{ employee.departmentName }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Position</span>
+              <span class="info-value">{{ employee.position }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Schedule Constraints -->
+        <div class="section-card">
+          <div class="section-title">
+            <mat-icon>schedule</mat-icon>
+            <h3>Schedule Constraints</h3>
+          </div>
+          <div class="info-grid three-col">
+            <div class="constraint-card">
+              <span class="constraint-value">{{ employee.maxHoursPerWeek }}</span>
+              <span class="constraint-label">Max Hours/Week</span>
+            </div>
+            <div class="constraint-card">
+              <span class="constraint-value">{{ employee.maxShiftsPerWeek }}</span>
+              <span class="constraint-label">Max Shifts/Week</span>
+            </div>
+            <div class="constraint-card">
+              <span class="constraint-value">{{ employee.minRestHours }}</span>
+              <span class="constraint-label">Min Rest Hours</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Skills -->
+        <div class="section-card" *ngIf="employee.skillNames?.length">
+          <div class="section-title">
+            <mat-icon>psychology</mat-icon>
+            <h3>Skills</h3>
+          </div>
+          <div class="skill-tags">
+            <mat-chip-set>
+              @for (skill of employee.skillNames; track skill) {
+                <mat-chip>{{ skill }}</mat-chip>
+              }
+            </mat-chip-set>
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+
+    <mat-tab label="Availability">
+      <div class="tab-content">
+        <div class="section-card">
+          <div class="section-title">
+            <mat-icon>event_available</mat-icon>
+            <h3>Weekly Availability</h3>
+          </div>
+          <div class="availability-list">
+            @for (day of daysOfWeek; track day) {
+              <div class="day-row">
+                <span class="day-name">{{ day | titlecase }}</span>
+                @if (getAvailabilityForDay(day); as avail) {
+                  <span class="day-status" [class]="avail.available ? 'available' : 'unavailable'">
+                    <mat-icon>{{ avail.available ? 'check_circle' : 'cancel' }}</mat-icon>
+                    {{ avail.available ? avail.startTime + ' – ' + avail.endTime : 'Unavailable' }}
+                  </span>
+                } @else {
+                  <span class="day-status not-set">
+                    <mat-icon>remove_circle_outline</mat-icon>
+                    Not set
+                  </span>
+                }
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

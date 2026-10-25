@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "Shift Scheduling & Attendance System API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Complete API collection for the Shift Scheduling and Attendance Optimization System"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8080" },
+    { "key": "token", "value": "" },
+    { "key": "userId", "value": "" }
+  ],
+  "item": [
+    {
+      "name": "1. Authentication",
+      "item": [
+        {
+          "name": "Login as Admin",
+          "event": [{ "listen": "test", "script": { "exec": ["var json = pm.response.json();", "pm.collectionVariables.set('token', json.token);", "pm.collectionVariables.set('userId', json.userId);", "pm.test('Login successful', function() { pm.response.to.have.status(200); });"] } }],
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/auth/login", "body": { "mode": "raw", "raw": "{\"username\":\"admin\",\"password\":\"admin123\"}" } }
+        },
+        {
+          "name": "Login as HR",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/auth/login", "body": { "mode": "raw", "raw": "{\"username\":\"hr001\",\"password\":\"hrpass123\"}" } }
+        },
+        {
+          "name": "Login as Employee",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"}], "url": "{{baseUrl}}/api/auth/login", "body": { "mode": "raw", "raw": "{\"username\":\"employee1\",\"password\":\"emp123\"}" } }
+        },
+        {
+          "name": "Validate Token",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/auth/validate" }
+        },
+        {
+          "name": "Register New User (Admin only)",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/auth/register", "body": { "mode": "raw", "raw": "{\"username\":\"newuser\",\"password\":\"pass123\",\"email\":\"new@example.com\",\"fullName\":\"New User\",\"role\":\"EMPLOYEE\"}" } }
+        }
+      ]
+    },
+    {
+      "name": "2. Employees",
+      "item": [
+        {
+          "name": "List All Employees",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/employees/all" }
+        },
+        {
+          "name": "Get Employees (Paginated)",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/employees?page=0&size=10" }
+        },
+        {
+          "name": "Create Employee",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/employees", "body": { "mode": "raw", "raw": "{\"userId\":1,\"fullName\":\"John Doe\",\"email\":\"john@example.com\",\"phone\":\"555-0101\",\"departmentId\":1,\"position\":\"Developer\",\"maxHoursPerWeek\":40,\"maxShiftsPerWeek\":5,\"minRestHours\":8,\"skillIds\":[1,2]}" } }
+        },
+        {
+          "name": "Get Employee by ID",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/employees/1" }
+        },
+        {
+          "name": "Get Departments",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/departments" }
+        },
+        {
+          "name": "Get Skills",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/skills" }
+        }
+      ]
+    },
+    {
+      "name": "3. Shifts",
+      "item": [
+        {
+          "name": "List All Shifts",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/shifts" }
+        },
+        {
+          "name": "Create Shift",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/shifts", "body": { "mode": "raw", "raw": "{\"name\":\"Morning Shift\",\"departmentId\":1,\"startTime\":\"08:00\",\"endTime\":\"16:00\",\"date\":\"2024-12-20\",\"overnight\":false,\"maxStaff\":5,\"minStaff\":2,\"nightShift\":false,\"requirements\":[{\"skillId\":1,\"requiredCount\":1}]}" } }
+        }
+      ]
+    },
+    {
+      "name": "4. Scheduling",
+      "item": [
+        {
+          "name": "Generate Schedule",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/schedules/generate", "body": { "mode": "raw", "raw": "{\"name\":\"Week 1 Schedule\",\"startDate\":\"2024-12-16\",\"endDate\":\"2024-12-22\",\"notes\":\"Auto-generated weekly schedule\"}" } }
+        },
+        {
+          "name": "List Schedules",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/schedules" }
+        },
+        {
+          "name": "Publish Schedule",
+          "request": { "method": "PUT", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/schedules/1/publish" }
+        },
+        {
+          "name": "Get Schedule Assignments",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/schedules/1/assignments" }
+        }
+      ]
+    },
+    {
+      "name": "5. Attendance",
+      "item": [
+        {
+          "name": "Check In",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/attendance/check-in", "body": { "mode": "raw", "raw": "{\"employeeId\":1,\"notes\":\"On time\"}" } }
+        },
+        {
+          "name": "Check Out",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/attendance/check-out", "body": { "mode": "raw", "raw": "{\"employeeId\":1,\"notes\":\"End of shift\"}" } }
+        },
+        {
+          "name": "Get Attendance History",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/attendance/history?employeeId=1&page=0&size=10" }
+        },
+        {
+          "name": "Get Attendance by Date",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/attendance/date/2024-12-20" }
+        }
+      ]
+    },
+    {
+      "name": "6. Leaves",
+      "item": [
+        {
+          "name": "Apply Leave",
+          "request": { "method": "POST", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/leaves", "body": { "mode": "raw", "raw": "{\"employeeId\":1,\"leaveType\":\"ANNUAL\",\"startDate\":\"2024-12-25\",\"endDate\":\"2024-12-27\",\"reason\":\"Holiday vacation\"}" } }
+        },
+        {
+          "name": "Get Pending Leaves",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/leaves/pending" }
+        },
+        {
+          "name": "Approve Leave",
+          "request": { "method": "PUT", "header": [{"key":"Content-Type","value":"application/json"},{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/leaves/1/review", "body": { "mode": "raw", "raw": "{\"approved\":true,\"reviewNotes\":\"Approved\"}" } }
+        },
+        {
+          "name": "Get Leave Balance",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/leaves/balance/1" }
+        }
+      ]
+    },
+    {
+      "name": "7. Notifications",
+      "item": [
+        {
+          "name": "Get Notifications",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/notifications/user/1?page=0&size=20" }
+        },
+        {
+          "name": "Get Unread Count",
+          "request": { "method": "GET", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/notifications/user/1/count" }
+        },
+        {
+          "name": "Mark as Read",
+          "request": { "method": "PUT", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/notifications/1/read" }
+        },
+        {
+          "name": "Mark All Read",
+          "request": { "method": "PUT", "header": [{"key":"Authorization","value":"Bearer {{token}}"}], "url": "{{baseUrl}}/api/notifications/user/1/read-all" }
+        }
+      ]
+    }
+  ]
+}

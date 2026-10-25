@@ -1,0 +1,50 @@
+<div class="page fade-in">
+  <div class="page-header">
+    <div>
+      <h2>My Leave Requests</h2>
+      <p class="subtitle">Track your leave history and balances</p>
+    </div>
+    <button class="action-btn primary-btn" routerLink="/leaves/apply">
+      <mat-icon>add</mat-icon> Apply Leave
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card" *ngIf="leaves.length">
+    <table mat-table [dataSource]="leaves" class="full-width">
+      <ng-container matColumnDef="leaveType">
+        <th mat-header-cell *matHeaderCellDef>Type</th>
+        <td mat-cell *matCellDef="let l">
+          <span class="leave-type-badge">{{ l.leaveType }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="startDate">
+        <th mat-header-cell *matHeaderCellDef>Start</th>
+        <td mat-cell *matCellDef="let l">{{ l.startDate }}</td>
+      </ng-container>
+      <ng-container matColumnDef="endDate">
+        <th mat-header-cell *matHeaderCellDef>End</th>
+        <td mat-cell *matCellDef="let l">{{ l.endDate }}</td>
+      </ng-container>
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let l">
+          <span class="status-badge" [ngClass]="l.status">{{ l.status }}</span>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="reason">
+        <th mat-header-cell *matHeaderCellDef>Reason</th>
+        <td mat-cell *matCellDef="let l">{{ l.reason }}</td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+    <mat-paginator [length]="totalElements" [pageSize]="pageSize" [pageSizeOptions]="[10,20]" (page)="onPage($event)"></mat-paginator>
+  </div>
+
+  <div class="empty-state" *ngIf="!leaves.length">
+    <mat-icon>beach_access</mat-icon>
+    <h3>No Leave Requests</h3>
+    <p>You haven't submitted any leave requests yet.</p>
+  </div>
+</div>

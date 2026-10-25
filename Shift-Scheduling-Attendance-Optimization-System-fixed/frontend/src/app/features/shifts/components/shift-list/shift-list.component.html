@@ -1,0 +1,134 @@
+<div class="page-wrap fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h2>Shifts</h2>
+      <p class="subtitle">Manage shift definitions and timings</p>
+    </div>
+    <button class="btn-primary" (click)="addShift()">
+      <mat-icon>add</mat-icon>
+      <span>Add Shift</span>
+    </button>
+  </div>
+
+  <!-- Filters -->
+  <div class="filter-bar">
+    <mat-form-field appearance="outline">
+      <mat-label>Department</mat-label>
+      <mat-select [(value)]="selectedDepartment" (selectionChange)="loadShifts()">
+        <mat-option>All</mat-option>
+        @for (dept of departments; track dept.id) {
+          <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>Start Date</mat-label>
+      <input matInput type="date" [(ngModel)]="startDate" (change)="loadShifts()">
+    </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>End Date</mat-label>
+      <input matInput type="date" [(ngModel)]="endDate" (change)="loadShifts()">
+    </mat-form-field>
+  </div>
+
+  <!-- Table Card -->
+  <div class="table-card">
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="name">
+        <th mat-header-cell *matHeaderCellDef>Shift Name</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="cell-primary">{{ s.name }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let s">{{ s.date }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="startTime">
+        <th mat-header-cell *matHeaderCellDef>Start</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="time-badge">{{ s.startTime }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="endTime">
+        <th mat-header-cell *matHeaderCellDef>End</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="time-badge">{{ s.endTime }}</span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="minStaff">
+        <th mat-header-cell *matHeaderCellDef>Min Staff</th>
+        <td mat-cell *matCellDef="let s">{{ s.minStaff }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="maxStaff">
+        <th mat-header-cell *matHeaderCellDef>Max Staff</th>
+        <td mat-cell *matCellDef="let s">{{ s.maxStaff }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="nightShift">
+        <th mat-header-cell *matHeaderCellDef>Night</th>
+        <td mat-cell *matCellDef="let s">
+          <span class="night-badge" *ngIf="s.nightShift">
+            <mat-icon>nights_stay</mat-icon> Night
+          </span>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell *matCellDef="let s">
+          <div class="action-btns">
+            <button class="icon-btn" matTooltip="Assigned employees" (click)="viewAssignees(s)">
+              <mat-icon>groups</mat-icon>
+            </button>
+            <button class="icon-btn" matTooltip="Edit" (click)="editShift(s.id)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button class="icon-btn danger" matTooltip="Delete" (click)="deleteShift(s)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell no-data" [attr.colspan]="displayedColumns.length">
+          <div class="empty-state">
+            <mat-icon>event_busy</mat-icon>
+            <h3>No shifts found</h3>
+            <p>Create a new shift or adjust your filters</p>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <mat-paginator [pageSize]="10" [pageSizeOptions]="[5, 10, 20]"
+                   showFirstLastButtons></mat-paginator>
+  </div>
+</div>
+
+<ng-template #assigneesDialog>
+  <h2 mat-dialog-title>Assigned to {{ selectedShift?.name }}</h2>
+  <mat-dialog-content>
+    <p class="muted" *ngIf="assigneesLoading">Loading…</p>
+    <p class="field-error" *ngIf="assigneesError">{{ assigneesError }}</p>
+    <ul class="assignee-list" *ngIf="!assigneesLoading && !assigneesError">
+      @for (a of assignees; track a.id) {
+        <li>{{ a.employeeName }} <small>ID {{ a.employeeId }}</small></li>
+      } @empty {
+        <li class="muted">No employees assigned yet. Use Edit to assign staff.</li>
+      }
+    </ul>
+  </mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button mat-dialog-close>Close</button>
+  </mat-dialog-actions>
+</ng-template>

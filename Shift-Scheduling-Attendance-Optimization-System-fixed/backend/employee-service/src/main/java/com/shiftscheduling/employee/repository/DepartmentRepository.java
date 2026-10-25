@@ -1,0 +1,6 @@
+package com.shiftscheduling.employee.repository;
+import com.shiftscheduling.employee.entity.Department;
+import org.springframework.data.jpa.repository.JpaRepository;
+public interface DepartmentRepository extends JpaRepository<Department, Long> {
+    boolean existsByName(String name);
+}

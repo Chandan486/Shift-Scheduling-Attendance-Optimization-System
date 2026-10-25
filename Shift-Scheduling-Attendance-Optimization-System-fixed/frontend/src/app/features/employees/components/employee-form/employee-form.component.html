@@ -1,0 +1,152 @@
+<div class="page-wrapper fade-in">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div>
+      <h2>{{ isEdit ? 'Edit' : 'Add' }} Employee</h2>
+      <p class="subtitle">{{ isEdit ? 'Update employee information' : 'Register a new team member' }}</p>
+    </div>
+    <button class="btn-outline" routerLink="/employees">
+      <mat-icon>arrow_back</mat-icon>
+      <span>Back to List</span>
+    </button>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <!-- Account Info (new only) -->
+    <div class="section-card" *ngIf="!isEdit">
+      <div class="section-title">
+        <mat-icon>lock_outline</mat-icon>
+        <h3>Login Account</h3>
+      </div>
+      <p class="section-desc">These credentials will be used for the employee to log in</p>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Username</mat-label>
+          <input matInput formControlName="username" required>
+          <mat-error *ngIf="form.get('username')?.hasError('required')">Username is required</mat-error>
+          <mat-error *ngIf="form.get('username')?.hasError('minlength')">Minimum 4 characters</mat-error>
+          <mat-error *ngIf="form.get('username')?.hasError('pattern')">Only letters, digits, underscores, hyphens allowed</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Password</mat-label>
+          <input matInput formControlName="password" type="password" required>
+          <mat-error *ngIf="form.get('password')?.hasError('required')">Password is required</mat-error>
+          <mat-error *ngIf="form.get('password')?.hasError('minlength')">Minimum 6 characters</mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="section-card">
+      <div class="section-title">
+        <mat-icon>person_outline</mat-icon>
+        <h3>Personal Information</h3>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Full Name</mat-label>
+          <input matInput formControlName="fullName" required>
+          <mat-error *ngIf="form.get('fullName')?.hasError('required')">Full name is required</mat-error>
+          <mat-error *ngIf="form.get('fullName')?.hasError('minlength')">Minimum 2 characters</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="email" type="email" required>
+          <mat-error *ngIf="form.get('email')?.hasError('required')">Email is required</mat-error>
+          <mat-error *ngIf="form.get('email')?.hasError('email')">Invalid email format</mat-error>
+        </mat-form-field>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Phone</mat-label>
+          <input matInput formControlName="phone" maxlength="10" placeholder="e.g. 9876543210">
+          <mat-error *ngIf="form.get('phone')?.hasError('pattern')">Enter a valid 10-digit Indian mobile number</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Position</mat-label>
+          <input matInput formControlName="position" required>
+          <mat-error *ngIf="form.get('position')?.hasError('required')">Position is required</mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Work Info -->
+    <div class="section-card">
+      <div class="section-title">
+        <mat-icon>business</mat-icon>
+        <h3>Work Details</h3>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Department</mat-label>
+          <mat-select formControlName="departmentId" required>
+            @for (dept of departments; track dept.id) {
+              <mat-option [value]="dept.id">{{ dept.name }}</mat-option>
+            }
+          </mat-select>
+          <mat-error *ngIf="form.get('departmentId')?.hasError('required')">Department is required</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>User ID</mat-label>
+          <input matInput formControlName="userId" type="number">
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Schedule Constraints -->
+    <div class="section-card">
+      <div class="section-title">
+        <mat-icon>schedule</mat-icon>
+        <h3>Schedule Constraints</h3>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline">
+          <mat-label>Max Hours/Week</mat-label>
+          <input matInput formControlName="maxHoursPerWeek" type="number">
+          <mat-error *ngIf="form.get('maxHoursPerWeek')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('maxHoursPerWeek')?.hasError('min')">Min 1</mat-error>
+          <mat-error *ngIf="form.get('maxHoursPerWeek')?.hasError('max')">Max 80</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Max Shifts/Week</mat-label>
+          <input matInput formControlName="maxShiftsPerWeek" type="number">
+          <mat-error *ngIf="form.get('maxShiftsPerWeek')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('maxShiftsPerWeek')?.hasError('min')">Min 1</mat-error>
+          <mat-error *ngIf="form.get('maxShiftsPerWeek')?.hasError('max')">Max 7</mat-error>
+        </mat-form-field>
+        <mat-form-field appearance="outline">
+          <mat-label>Min Rest Hours</mat-label>
+          <input matInput formControlName="minRestHours" type="number">
+          <mat-error *ngIf="form.get('minRestHours')?.hasError('required')">Required</mat-error>
+          <mat-error *ngIf="form.get('minRestHours')?.hasError('min')">Min 4</mat-error>
+          <mat-error *ngIf="form.get('minRestHours')?.hasError('max')">Max 24</mat-error>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="section-card">
+      <div class="section-title">
+        <mat-icon>psychology</mat-icon>
+        <h3>Skills</h3>
+      </div>
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select Skills</mat-label>
+        <mat-select formControlName="skillIds" multiple>
+          @for (skill of skills; track skill.id) {
+            <mat-option [value]="skill.id">{{ skill.name }}</mat-option>
+          }
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <!-- Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn-outline" routerLink="/employees">Cancel</button>
+      <button type="submit" class="btn-primary" [disabled]="form.invalid">
+        <mat-icon>{{ isEdit ? 'save' : 'person_add' }}</mat-icon>
+        <span>{{ isEdit ? 'Update Employee' : 'Create Employee' }}</span>
+      </button>
+    </div>
+  </form>
+</div>

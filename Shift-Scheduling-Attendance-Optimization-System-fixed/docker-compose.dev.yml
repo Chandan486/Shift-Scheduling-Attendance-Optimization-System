@@ -1,0 +1,24 @@
+# Optional developer override. NOT used by default.
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+# Publishes each internal service's port to the host LOOPBACK address only, so Swagger UI
+# (e.g. http://127.0.0.1:8085/swagger-ui.html) can be opened during development.
+# Do not use this file in any deployment: it lets callers bypass the gateway's authorization rules.
+services:
+  auth-service:
+    ports:
+      - "127.0.0.1:8081:8081"
+  employee-service:
+    ports:
+      - "127.0.0.1:8082:8082"
+  scheduling-service:
+    ports:
+      - "127.0.0.1:8083:8083"
+  attendance-service:
+    ports:
+      - "127.0.0.1:8084:8084"
+  leave-service:
+    ports:
+      - "127.0.0.1:8085:8085"
+  notification-service:
+    ports:
+      - "127.0.0.1:8086:8086"

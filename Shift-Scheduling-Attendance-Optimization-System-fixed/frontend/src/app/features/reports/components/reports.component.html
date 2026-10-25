@@ -1,0 +1,122 @@
+<div class="reports-page fade-in">
+  <div class="page-header">
+    <div>
+      <h2>Reports</h2>
+      <p class="subtitle">Attendance analytics and scheduling coverage</p>
+    </div>
+  </div>
+
+  <mat-tab-group class="reports-tabs" animationDuration="200ms">
+    <!-- Attendance Report Tab -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">fact_check</mat-icon>
+        Attendance Report
+      </ng-template>
+      <div class="tab-body">
+        <div class="filter-bar">
+          <mat-form-field appearance="outline" class="date-field">
+            <mat-label>Select Date</mat-label>
+            <input matInput type="date" [(ngModel)]="attendanceDate">
+          </mat-form-field>
+          <button class="btn btn-primary" (click)="loadAttendance()">
+            <mat-icon>search</mat-icon>
+            <span>Load Report</span>
+          </button>
+        </div>
+
+        <div class="table-wrapper" *ngIf="attendanceRecords.length">
+          <table mat-table [dataSource]="attendanceRecords" class="data-table">
+            <ng-container matColumnDef="employeeId">
+              <th mat-header-cell *matHeaderCellDef>Emp ID</th>
+              <td mat-cell *matCellDef="let r">{{ r.employeeId }}</td>
+            </ng-container>
+            <ng-container matColumnDef="date">
+              <th mat-header-cell *matHeaderCellDef>Date</th>
+              <td mat-cell *matCellDef="let r">{{ r.date }}</td>
+            </ng-container>
+            <ng-container matColumnDef="checkInTime">
+              <th mat-header-cell *matHeaderCellDef>Check In</th>
+              <td mat-cell *matCellDef="let r">{{ r.checkInTime || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="checkOutTime">
+              <th mat-header-cell *matHeaderCellDef>Check Out</th>
+              <td mat-cell *matCellDef="let r">{{ r.checkOutTime || '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="workedHours">
+              <th mat-header-cell *matHeaderCellDef>Hours</th>
+              <td mat-cell *matCellDef="let r">{{ r.workedHours ? (r.workedHours | number:'1.1-1') : '—' }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let r">
+                <span class="status-badge" [ngClass]="r.status?.toLowerCase()">{{ r.status }}</span>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="attendanceColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: attendanceColumns;"></tr>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!attendanceRecords.length">
+          <mat-icon>event_note</mat-icon>
+          <h3>No data loaded</h3>
+          <p>Select a date and click "Load Report" to view attendance records</p>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!-- Scheduling Coverage Tab -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="tab-icon">calendar_month</mat-icon>
+        Scheduling Coverage
+      </ng-template>
+      <div class="tab-body">
+        <div class="filter-bar">
+          <button class="btn btn-primary" (click)="loadSchedules()">
+            <mat-icon>refresh</mat-icon>
+            <span>Load Schedules</span>
+          </button>
+        </div>
+
+        <div class="table-wrapper" *ngIf="schedules.length">
+          <table mat-table [dataSource]="schedules" class="data-table">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Schedule Name</th>
+              <td mat-cell *matCellDef="let s" class="font-medium">{{ s.name }}</td>
+            </ng-container>
+            <ng-container matColumnDef="startDate">
+              <th mat-header-cell *matHeaderCellDef>Start Date</th>
+              <td mat-cell *matCellDef="let s">{{ s.startDate }}</td>
+            </ng-container>
+            <ng-container matColumnDef="endDate">
+              <th mat-header-cell *matHeaderCellDef>End Date</th>
+              <td mat-cell *matCellDef="let s">{{ s.endDate }}</td>
+            </ng-container>
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let s">
+                <span class="status-badge" [ngClass]="s.status">{{ s.status }}</span>
+              </td>
+            </ng-container>
+            <ng-container matColumnDef="assignmentCount">
+              <th mat-header-cell *matHeaderCellDef>Assignments</th>
+              <td mat-cell *matCellDef="let s">
+                <span class="count-badge">{{ s.assignmentCount }}</span>
+              </td>
+            </ng-container>
+            <tr mat-header-row *matHeaderRowDef="scheduleColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: scheduleColumns;"></tr>
+          </table>
+        </div>
+
+        <div class="empty-state" *ngIf="!schedules.length">
+          <mat-icon>calendar_month</mat-icon>
+          <h3>No schedules loaded</h3>
+          <p>Click "Load Schedules" to view scheduling coverage data</p>
+        </div>
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

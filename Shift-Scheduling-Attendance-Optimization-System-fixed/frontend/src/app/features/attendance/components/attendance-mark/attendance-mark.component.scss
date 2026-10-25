@@ -1,0 +1,144 @@
+.page { max-width: 700px; }
+
+.section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.field-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.employee-select {
+  width: 100%;
+  max-width: 400px;
+}
+
+// ===== ATTENDANCE STATUS CARD =====
+.attendance-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.att-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 20px;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &.checked-in {
+    background: var(--success-light);
+    color: var(--success);
+  }
+
+  &.checked-out {
+    background: var(--primary-light);
+    color: var(--primary);
+  }
+}
+
+.att-details {
+  display: flex;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.att-detail-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  mat-icon {
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+    color: var(--text-muted);
+  }
+
+  .att-detail-label {
+    display: block;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .att-detail-value {
+    display: block;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+  }
+}
+
+// ===== NOT CHECKED =====
+.not-checked {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-secondary);
+  font-size: 14px;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: var(--text-muted);
+  }
+}
+
+// ===== ACTION BUTTONS =====
+.btn-group {
+  display: flex;
+  gap: 12px;
+}
+
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 28px;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &.checkin-btn {
+    background: linear-gradient(135deg, #10b981, #059669);
+    &:hover:not(:disabled) { box-shadow: 0 4px 12px rgba(16,185,129,0.3); transform: translateY(-1px); }
+  }
+
+  &.checkout-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    &:hover:not(:disabled) { box-shadow: 0 4px 12px rgba(59,130,246,0.3); transform: translateY(-1px); }
+  }
+}

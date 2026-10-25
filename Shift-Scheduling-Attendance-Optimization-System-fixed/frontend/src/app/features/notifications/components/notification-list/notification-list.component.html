@@ -1,0 +1,43 @@
+<div class="notifications-page fade-in">
+  <div class="page-header">
+    <div>
+      <h2>Notifications</h2>
+      <p class="subtitle">Stay updated with your latest alerts</p>
+    </div>
+    <button class="btn btn-outline" (click)="markAllRead()" [disabled]="!notifications.length">
+      <mat-icon>done_all</mat-icon>
+      <span>Mark All Read</span>
+    </button>
+  </div>
+
+  <p class="load-error" *ngIf="loadError">{{ loadError }}</p>
+
+  <div class="notification-list" *ngIf="notifications.length > 0">
+    <div *ngFor="let n of notifications"
+         class="notification-item"
+         [class.unread]="!n.isRead"
+         (click)="markRead(n)">
+      <div class="notif-icon" [class.read]="n.isRead">
+        <mat-icon>{{ getIcon(n.notificationType) }}</mat-icon>
+      </div>
+      <div class="notif-body">
+        <span class="notif-title">{{ n.title }}</span>
+        <span class="notif-message">{{ n.message }}</span>
+      </div>
+      <div class="notif-meta">
+        <span class="notif-time">{{ n.createdAt | date:'medium' }}</span>
+        <span class="notif-dot" *ngIf="!n.isRead"></span>
+      </div>
+    </div>
+  </div>
+
+  <mat-paginator *ngIf="notifications.length" [length]="totalElements" [pageSize]="pageSize"
+                 [pageSizeOptions]="[10, 20, 50]" (page)="onPage($event)"
+                 showFirstLastButtons></mat-paginator>
+
+  <div class="empty-state" *ngIf="!notifications.length && !loading && !loadError">
+    <mat-icon>notifications_none</mat-icon>
+    <h3>No notifications</h3>
+    <p>You're all caught up!</p>
+  </div>
+</div>

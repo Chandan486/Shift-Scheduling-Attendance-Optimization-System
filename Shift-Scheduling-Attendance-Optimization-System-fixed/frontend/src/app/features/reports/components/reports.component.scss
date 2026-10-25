@@ -1,0 +1,103 @@
+// ===== REPORTS PAGE =====
+.reports-tabs {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.tab-icon {
+  margin-right: 8px;
+  font-size: 18px !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.tab-body {
+  padding: 24px;
+}
+
+// ===== FILTER BAR =====
+.filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.date-field {
+  width: 220px;
+}
+
+// ===== DATA TABLE =====
+.table-wrapper {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.data-table {
+  width: 100%;
+}
+
+.font-medium {
+  font-weight: 600 !important;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 13px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  min-width: 28px;
+}
+
+// ===== BUTTONS =====
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  white-space: nowrap;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: white;
+
+  &:hover {
+    background: var(--primary-dark);
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+// ===== RESPONSIVE =====
+@media (max-width: 600px) {
+  .filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .date-field {
+    width: 100%;
+  }
+}

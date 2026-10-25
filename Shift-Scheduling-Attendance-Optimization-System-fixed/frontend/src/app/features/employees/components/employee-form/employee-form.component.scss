@@ -1,0 +1,114 @@
+.page-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+// ===== SECTION CARD =====
+.section-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+
+  mat-icon {
+    color: var(--primary);
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+
+  h3 {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+  }
+}
+
+.section-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin: 0 0 20px 32px;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+
+  mat-form-field { flex: 1; }
+
+  @media (max-width: 600px) {
+    flex-direction: column;
+    gap: 0;
+  }
+}
+
+.full-width { width: 100%; }
+
+// ===== BUTTONS =====
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+
+  &:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &:hover {
+    background: var(--bg-hover);
+    border-color: var(--text-muted);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+}

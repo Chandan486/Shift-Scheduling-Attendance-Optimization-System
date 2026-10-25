@@ -1,0 +1,45 @@
+.action-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+  white-space: nowrap;
+  border: none;
+
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+
+  &.primary-btn {
+    background: var(--primary);
+    color: white;
+    &:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(59,130,246,0.3); }
+  }
+}
+
+.table-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.full-width { width: 100%; }
+
+.leave-type-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+}
